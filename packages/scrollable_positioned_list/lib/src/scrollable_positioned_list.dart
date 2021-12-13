@@ -39,7 +39,6 @@ class ScrollablePositionedList extends StatefulWidget {
     required this.itemBuilder,
     Key? key,
     this.itemScrollController,
-    this.shrinkWrap = false,
     ItemPositionsListener? itemPositionsListener,
     this.initialScrollIndex = 0,
     this.initialAlignment = 0,
@@ -65,7 +64,6 @@ class ScrollablePositionedList extends StatefulWidget {
     required this.itemBuilder,
     required this.separatorBuilder,
     Key? key,
-    this.shrinkWrap = false,
     this.itemScrollController,
     ItemPositionsListener? itemPositionsListener,
     this.initialScrollIndex = 0,
@@ -123,15 +121,6 @@ class ScrollablePositionedList extends StatefulWidget {
   /// See [ScrollView.reverse].
   final bool reverse;
 
-  /// {@template flutter.widgets.scroll_view.shrinkWrap}
-  /// Whether the extent of the scroll view in the [scrollDirection] should be
-  /// determined by the contents being viewed.
-  ///
-  ///  Defaults to false.
-  ///
-  /// See [ScrollView.shrinkWrap].
-  final bool shrinkWrap;
-
   /// How the scroll view should respond to user input.
   ///
   /// For example, determines how the scroll view continues to animate after the
@@ -179,15 +168,15 @@ class ScrollablePositionedList extends StatefulWidget {
 /// Controller to jump or scroll to a particular position in a
 /// [ScrollablePositionedList].
 class ItemScrollController {
-  
+
   ItemScrollController({ ScrollController? scrollController }) {
     this.scrollController = scrollController ?? ScrollController(keepScrollOffset: false);
   }
-  
+
   /// Exposes [ScrollablePositionedList]'s Primary scroll controller
   ///
   ScrollController? scrollController;
-  
+
   /// Whether any ScrollablePositionedList objects are attached this object.
   ///
   /// If `false`, then [jumpTo] and [scrollTo] must not be called.
@@ -267,17 +256,12 @@ class ItemScrollController {
 
 class _ScrollablePositionedListState extends State<ScrollablePositionedList>
     with TickerProviderStateMixin {
-  
-  late _ListDisplayDetails primary;
-  
-  late _ListDisplayDetails secondary;
-  
   /// Details for the primary (active) [ListView].
-  primary = _ListDisplayDetails(const ValueKey('Ping'), widget.itemScrollController?.scrollController ?? ScrollController(keepScrollOffset:false));
+  late _ListDisplayDetails primary;
 
   /// Details for the secondary (transitional) [ListView] that is temporarily
   /// shown when scrolling a long distance.
-  secondary = _ListDisplayDetails(const ValueKey('Pong'), ScrollController(keepScrollOffset:false));
+  late _ListDisplayDetails secondary;
 
   final opacity = ProxyAnimation(const AlwaysStoppedAnimation<double>(0));
 
@@ -289,6 +273,8 @@ class _ScrollablePositionedListState extends State<ScrollablePositionedList>
   void initState() {
     super.initState();
     ItemPosition? initialPosition = PageStorage.of(context)!.readState(context);
+    primary = _ListDisplayDetails(const ValueKey('Ping'),  widget.itemScrollController?.scrollController ?? ScrollController(keepScrollOffset: false));
+    secondary = _ListDisplayDetails(const ValueKey('Pong'), ScrollController(keepScrollOffset: false));
     primary.target = initialPosition?.index ?? widget.initialScrollIndex;
     primary.alignment =
         initialPosition?.itemLeadingEdge ?? widget.initialAlignment;
@@ -374,7 +360,6 @@ class _ScrollablePositionedListState extends State<ScrollablePositionedList>
                       cacheExtent: cacheExtent,
                       alignment: primary.alignment,
                       physics: widget.physics,
-                      shrinkWrap: widget.shrinkWrap,
                       addSemanticIndexes: widget.addSemanticIndexes,
                       semanticChildCount: widget.semanticChildCount,
                       padding: widget.padding,
@@ -404,7 +389,6 @@ class _ScrollablePositionedListState extends State<ScrollablePositionedList>
                         cacheExtent: cacheExtent,
                         alignment: secondary.alignment,
                         physics: widget.physics,
-                        shrinkWrap: widget.shrinkWrap,
                         addSemanticIndexes: widget.addSemanticIndexes,
                         semanticChildCount: widget.semanticChildCount,
                         padding: widget.padding,
