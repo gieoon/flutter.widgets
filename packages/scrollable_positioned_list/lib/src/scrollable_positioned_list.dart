@@ -179,6 +179,15 @@ class ScrollablePositionedList extends StatefulWidget {
 /// Controller to jump or scroll to a particular position in a
 /// [ScrollablePositionedList].
 class ItemScrollController {
+  
+  ItemScrollController({ ScrollController? scrollController }) {
+    this.scrollController = scrollController ?? ScrollController(keepScrollOffset: false);
+  }
+  
+  /// Exposes [ScrollablePositionedList]'s Primary scroll controller
+  ///
+  ScrollController? scrollController;
+  
   /// Whether any ScrollablePositionedList objects are attached this object.
   ///
   /// If `false`, then [jumpTo] and [scrollTo] must not be called.
@@ -258,12 +267,17 @@ class ItemScrollController {
 
 class _ScrollablePositionedListState extends State<ScrollablePositionedList>
     with TickerProviderStateMixin {
+  
+  late _ListDisplayDetails primary;
+  
+  late _ListDisplayDetails secondary;
+  
   /// Details for the primary (active) [ListView].
-  var primary = _ListDisplayDetails(const ValueKey('Ping'));
+  var primary = _ListDisplayDetails(const ValueKey('Ping'), widget.itemScrollController?.scrollController ?? ScrollController(keepScrollOffset:false));
 
   /// Details for the secondary (transitional) [ListView] that is temporarily
   /// shown when scrolling a long distance.
-  var secondary = _ListDisplayDetails(const ValueKey('Pong'));
+  var secondary = _ListDisplayDetails(const ValueKey('Pong'), ScrollController(keepScrollOffset:false));
 
   final opacity = ProxyAnimation(const AlwaysStoppedAnimation<double>(0));
 
@@ -574,10 +588,10 @@ class _ScrollablePositionedListState extends State<ScrollablePositionedList>
 }
 
 class _ListDisplayDetails {
-  _ListDisplayDetails(this.key);
+  _ListDisplayDetails(this.key, this.scrollController);
 
   final itemPositionsNotifier = ItemPositionsNotifier();
-  final scrollController = ScrollController(keepScrollOffset: false);
+  final ScrollController scrollController;
 
   /// The index of the item to scroll to.
   int target = 0;
