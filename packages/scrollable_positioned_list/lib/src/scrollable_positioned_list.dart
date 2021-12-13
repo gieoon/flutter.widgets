@@ -273,11 +273,11 @@ class _ScrollablePositionedListState extends State<ScrollablePositionedList>
   late _ListDisplayDetails secondary;
   
   /// Details for the primary (active) [ListView].
-  var primary = _ListDisplayDetails(const ValueKey('Ping'), widget.itemScrollController?.scrollController ?? ScrollController(keepScrollOffset:false));
+  primary = _ListDisplayDetails(const ValueKey('Ping'), widget.itemScrollController?.scrollController ?? ScrollController(keepScrollOffset:false));
 
   /// Details for the secondary (transitional) [ListView] that is temporarily
   /// shown when scrolling a long distance.
-  var secondary = _ListDisplayDetails(const ValueKey('Pong'), ScrollController(keepScrollOffset:false));
+  secondary = _ListDisplayDetails(const ValueKey('Pong'), ScrollController(keepScrollOffset:false));
 
   final opacity = ProxyAnimation(const AlwaysStoppedAnimation<double>(0));
 
